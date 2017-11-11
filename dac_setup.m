@@ -5,6 +5,8 @@ function [dac_goal, dac_input] = dac_setup(freq, t_span, y_init)
 u = sin(freq*t_span);
 % the initial value of y
 [t, y] = ode45(@(t, y) - y - sin(y) + sin(freq*t), t_span, y_init);
+% add noise
+y = y + wgn(1001, 1, 1)/4000;
 % calc the grad from the diff methods as is x(k+1) - x(k)
 dy = diff(y);
 dt = diff(t); 
@@ -14,10 +16,10 @@ grad = dy ./ dt;
 grad_true = -y -sin(y); 
 %shift one step to align
 grad_true = grad_true(2:end); 
-y = y(2:end)
+y = y(2:end);
 % gather the data to do the si 
 
-dac_goal = grad - u(2:end)';
-dac_input = u(2:end)';
+dac_goal = grad - u(2:end)' ;
+dac_input =y;
 
 
