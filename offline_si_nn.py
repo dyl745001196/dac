@@ -20,17 +20,13 @@ goal_min = np.min(dac_goal)
 # dac_goal = 2*(dac_goal - goal_min)/(goal_max - goal_min) -1  
 
 model = Sequential()
-model.add(Dense(20, input_dim=1))	
-model.add(Activation('sigmoid'))
-model.add(Dense(20))
+model.add(Dense(10, input_dim=1))	
 model.add(Activation('relu'))
 model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='rmsprop')
 fig = plt.figure()
 plt.pause(0.1)
-import pdb
-pdb.set_trace()
 for i in range(20):
 	model.fit(dac_input, dac_goal, epochs=1, batch_size = 64, validation_split = 0.4)
 
@@ -41,7 +37,16 @@ for i in range(20):
 	plt.plot(pred_out, 'r')
 	plt.pause(0.1)
 	
-plt.show()
 
 
+weights = model.get_weights()
+
+weights_mat = {}
+index = 0
+for item in weights:
+
+	weights_mat['weight' + str(index)] = item
+	index += 1
+	
+sio.savemat('weights', weights_mat)
 
