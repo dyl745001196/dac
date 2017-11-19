@@ -8,7 +8,7 @@ theta = 1;
 x_cur = 0;
 x_m_cur = 0;
 
-gamma_x = 50;
+gamma_x = 60;
 gamma_r = gamma_x;
 
 x_set = [x_cur];
@@ -28,8 +28,8 @@ for i = 1:1000
     e = x_cur - x_m_cur;
     
     theta_hat = -e * dt * offline_nn(x_cur) + theta_hat;
-    k_x_hat = - gamma_x * e * x_cur;
-    k_r_hat = - gamma_r * e * r;
+    k_x_hat = - gamma_x * e * x_cur*dt + k_x_hat;
+    k_r_hat = - gamma_r * e * r*dt  + k_r_hat;
 
 end
 
