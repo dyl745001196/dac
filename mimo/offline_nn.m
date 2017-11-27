@@ -9,4 +9,5 @@ b2 = weight5;
 z1 = max(x*W0 + b0, 0);
 z2 = max(z1*W1 + b1, 0);
 y = z2*W2 + b2;
+y = -y;
 end

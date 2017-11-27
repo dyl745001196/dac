@@ -13,9 +13,10 @@ k_r_hat = [5 0;
            0 5];
  
 
-gamma_x = [0.1 0;
-           0 1];
-gamma_r = gamma_x;
+gamma_x = [2 0;
+           0 2];
+gamma_r = [10 0
+           0 100];
 
 P = [1 0;
      0 1];
@@ -24,8 +25,8 @@ x_set = [x_cur];
 x_m_set = [x_m_cur];
 
 for i = 1:4000
-    r = [0.8*sin(i / 100) -0.7*sin(i/100)];
-    %r = [1 1];
+    r = [1*sin(i/100) -0.5*sin(i/100)];
+    r = [1 1];
     DL_x_r = offline_nn(x_cur)* theta_hat + k_x_hat * x_cur' + k_r_hat * r';
     x_next = sim_sys(x_cur, dt, DL_x_r);
     x_m_next = sim_ref(x_m_cur, dt, r);
