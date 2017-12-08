@@ -42,7 +42,7 @@ plt.show()
 
 
 weights = model.get_weights()
-
+model.save_weights('weights.h5')
 weights_mat = {}
 index = 0
 for item in weights:

@@ -13,10 +13,10 @@ k_r_hat = [5 0;
            0 5];
  
 
-gamma_x = [2 0;
-           0 2];
-gamma_r = [10 0
-           0 100];
+gamma_x = [5 0;
+           0 0.1];
+gamma_r = [0.1 0
+           0 0.2];
 
 P = [1 0;
      0 1];
@@ -25,7 +25,7 @@ x_set = [x_cur];
 x_m_set = [x_m_cur];
 
 for i = 1:4000
-    %r is the reference
+    %r is the referenc
     r = [1*sin(i/100) -0.5*sin(i/100)];
     r = [1 1];
     DL_x_r = (offline_nn(x_cur)* theta_hat)' + k_x_hat * x_cur' + k_r_hat * r';
