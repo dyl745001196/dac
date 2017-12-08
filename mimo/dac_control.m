@@ -25,9 +25,10 @@ x_set = [x_cur];
 x_m_set = [x_m_cur];
 
 for i = 1:4000
+    %r is the reference
     r = [1*sin(i/100) -0.5*sin(i/100)];
     r = [1 1];
-    DL_x_r = offline_nn(x_cur)* theta_hat + k_x_hat * x_cur' + k_r_hat * r';
+    DL_x_r = (offline_nn(x_cur)* theta_hat)' + k_x_hat * x_cur' + k_r_hat * r';
     x_next = sim_sys(x_cur, dt, DL_x_r);
     x_m_next = sim_ref(x_m_cur, dt, r);
     x_cur = x_next;

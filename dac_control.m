@@ -8,7 +8,7 @@ theta = 1;
 x_cur = 0;
 x_m_cur = 0;
 
-gamma_x = 60;
+gamma_x = 0.1;
 gamma_r = gamma_x;
 
 x_set = [x_cur];
