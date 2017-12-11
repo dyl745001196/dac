@@ -4,7 +4,6 @@ dt = 0.01 ;
 
 dac_u_set = [];
 dac_x_set = [];
-dac_dot_x_set = [];
 % change the freq of the input seq
 for freq = 1:5
     y_cur = y_init;
@@ -17,16 +16,16 @@ for freq = 1:5
         y_item_set = [y_item_set;y_next];
         y_cur = y_next;
     end
-    dac_dot_x = diff(y_item_set)*100;
+    diff_y_item = diff(y_item_set)*100;
+    dac_goal = diff_y_item - u_set(1:end-1, :);
     dac_u = u_set(1:end-1, :)
     dac_x = y_item_set(1:end-1, :);
     
-    dac_dot_x_set = [dac_dot_x_set; dac_dot_x];
-    dac_x_set = [dac_x_set; dac_x];
-    dac_u_set = [dac_u_set; dac_u];
+    dac_goal_set = [dac_goal_set; dac_goal];
+    dac_x_set = [dac_x_set; dac_input];
+   ;
 end
 %save('mimo_data_for_sindy', 'u_set', 'x', 'dot_x')
-data = [dac_u_set dac_x_set dac_dot_x_set];
-csvwrite('mimo_data_for_sindy.csv', data)
-%plot(dac_goal_set)
+csvwrite()
+plot(dac_goal_set)
 
