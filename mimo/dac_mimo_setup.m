@@ -1,3 +1,4 @@
+clear all
 y_init = [0; 0];
 
 dt = 0.01 ;
@@ -6,13 +7,13 @@ dac_u_set = [];
 dac_x_set = [];
 dac_dot_x_set = [];
 % change the freq of the input seq
-for freq = 1:10
+for freq = 1:1
     y_cur = y_init;
     %y_item_set for every individual y set for the freq
     y_item_set = [];
     u_set = [];
-    u_item = wgn(400, 2, 0.05);
-    for i = 1:400
+    u_item = wgn(2000, 2, 0.05).*3;
+    for i = 1:2000
         y_next = sim_sys(y_cur, dt, u_item(i, :));
         u_set = [u_set; u_item(i, :)];
         y_item_set = [y_item_set;y_next];
@@ -27,7 +28,7 @@ for freq = 1:10
     dac_u_set = [dac_u_set; dac_u];
 end
 %save('mimo_data_for_sindy', 'u_set', 'x', 'dot_x')
-data = [dac_u_set dac_x_set dac_dot_x_set];
-csvwrite('mimo_data_for_sindy.csv', data)
+data = [dac_x_set dac_u_set dac_dot_x_set];
+csvwrite('mimo_data_for_sindy10.csv', data)
 %plot(dac_goal_set)
 
