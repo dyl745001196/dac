@@ -6,14 +6,15 @@ dac_u_set = [];
 dac_x_set = [];
 dac_dot_x_set = [];
 % change the freq of the input seq
-for freq = 1:5
+for freq = 1:10
     y_cur = y_init;
     %y_item_set for every individual y set for the freq
     y_item_set = [];
     u_set = [];
-    for i = 1:200
-        y_next = sim_sys(y_cur, dt, [0.8*sin(freq*i/20); 0.6*sin(freq*i/20)]);
-        u_set = [u_set; [0.8*sin(freq*i/20) 0.6*sin(freq*i/20)]];
+    u_item = wgn(400, 2, 0.05);
+    for i = 1:400
+        y_next = sim_sys(y_cur, dt, u_item(i, :));
+        u_set = [u_set; u_item(i, :)];
         y_item_set = [y_item_set;y_next];
         y_cur = y_next;
     end
