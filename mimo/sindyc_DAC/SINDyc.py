@@ -7,19 +7,20 @@ from collections import Counter
 import pdb
 
 class SINDyc:
-    def __init__(self,data,x_dim,u_dim,polyorder=2,usesine=False,sineorder=5,cutoff=0.025):
+    def __init__(self,data,x_dim,u_dim,
+                 polyorder=2,usesine=False,sineorder=5,cutoff=0.025,iter_lim=10):
 
         self._t         = data[:,0]
         self._x         = data[:,1:x_dim+1]
         self._u         = data[:,x_dim+1:]
         self._dx        = []
-        # self._dim       = np.shape(data)[1]-1 # take out the time column
         self._xdim      = x_dim
         self._udim      = u_dim
         self._polyorder = polyorder
         self._usesine   = usesine
-        self._sineorder  = sineorder
+        self._sineorder = sineorder
         self._cutoff    = cutoff
+        self._iter_lim  = iter_lim
         self._theta     = []
         self._xi        = []
         self._rx        = []
@@ -133,8 +134,8 @@ class SINDyc:
         #self._xi = np.dot(np.linalg.pinv(self._theta),self._dx)
         self._xi = np.linalg.lstsq(self._theta,self._dx)[0]
         print "Iteration in progress: ",
-        for k in xrange(10):
-            print "{},".format(k+1),
+        for k in xrange(self._iter_lim):
+            # print "{},".format(k+1),
             smallinds = np.abs(self._xi)<self._cutoff
             self._xi[smallinds] = 0
             for ind in range(self._xdim):
@@ -194,7 +195,7 @@ class SINDyc:
         terms = ["1"] + terms
 
         for i in xrange(len(StateVariables)):
-            if self._xi[0,i] > 1e-3:
+            if abs(self._xi[0,i]) > 1e-3:
                 row = "d"+StateVariables[i]+"/dt = " + "{: 2.3f}".format(self._xi[0,i])
                 sp = " + "
             else:
@@ -203,7 +204,7 @@ class SINDyc:
 
             for j in xrange(1,len(self._xi)):
                 ss = "{: 2.2f}".format(self._xi[j,i])
-                if self._xi[j,i]>1e-3:
+                if abs(self._xi[j,i]) > 1e-3:
                     # if not terms[j] in StateVariables:
                         # row = row + sp + \
                             # "{: 2.3f}".format(self._xi[j,i])+" "+self.StringMultFormat(terms[j])
@@ -231,28 +232,40 @@ if __name__ == "__main__":
     x_dim = 2
     u_dim = 2
 
-    full_data = np.loadtxt("mimo_data_for_sindy.csv", delimiter=",") # [x, u, x_dot]
-    data = full_data[:,:x_dim+u_dim]
-    ddata = full_data[:,x_dim+u_dim:]
+    full_data = np.loadtxt("data/mimo_data_for_sindy1.csv", delimiter=",") # [x, u, x_dot]
+    data = full_data[0:500,:x_dim+u_dim]
+    ddata = full_data[0:500,x_dim+u_dim:]
 
+    '''
+        Add noise to my data
+    '''
+    eps    = 0.05
+    noise  = eps*np.random.randn(data.shape[0],x_dim+u_dim)
+    dnoise = eps*np.random.randn(ddata.shape[0],x_dim)
+    data += noise
+    ddata += dnoise
+
+    '''
+        Add time to data
+    '''
     data = np.c_[np.asarray([i for i in range(data.shape[0])]), data]
     ddata = np.c_[np.asarray([i for i in range(ddata.shape[0])]), ddata]
 
-    # '''
-        # Add noise to my data
-    # '''
-    # eps    = 0.05
-    # noise  = eps*np.random.randn(x_dim,data.shape[0])
-    # dnoise = eps*np.random.randn(x_dim,ddata.shape[0])
 
-    # data  = np.transpose(np.insert(np.array([sir._SS , sir._II , sir._RR]) + noise,0,sir._Time,axis=0))
-    # ddata = np.transpose(np.insert(np.array([sir._dSS, sir._dII, sir._dRR])+dnoise,0,sir._Time,axis=0))
 
 
     '''
         Run SINDy
     '''
-    sin = SINDyc(data=data,x_dim=x_dim,u_dim=u_dim,polyorder=2,sineorder=2,usesine=True,cutoff=1)
+    sin = SINDyc(data=data,
+                 x_dim=x_dim,
+                 u_dim=u_dim,
+                 polyorder=5,
+                 sineorder=5,
+                 usesine=True,
+                 cutoff=.1,
+                 iter_lim=500)
+
     sin.SetDerivative(ddata)
     sin.RunSINDyc(simulate=False)
     # sin.SINDycPlot(statesymbols=["X1","X2"],
