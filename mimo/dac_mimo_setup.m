@@ -12,8 +12,8 @@ for freq = 1:1
     %y_item_set for every individual y set for the freq
     y_item_set = [];
     u_set = [];
-    u_item = wgn(2000, 2, 0.05).*3;
-    for i = 1:2000
+    u_item = wgn(200, 1, 0.05);
+    for i = 1:200
         y_next = sim_sys(y_cur, dt, u_item(i, :));
         u_set = [u_set; u_item(i, :)];
         y_item_set = [y_item_set;y_next];
@@ -29,6 +29,6 @@ for freq = 1:1
 end
 %save('mimo_data_for_sindy', 'u_set', 'x', 'dot_x')
 data = [dac_x_set dac_u_set dac_dot_x_set];
-csvwrite('mimo_data_for_sindy10.csv', data)
+csvwrite('danbai_for_sindy.csv', data)
 %plot(dac_goal_set)
 
